@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gymblix — The Complete Gym Management Platform</title>
+<meta name="description" content="Manage members, track attendance, handle payments, and grow your gym — all from one powerful SaaS platform built for modern fitness businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/gymblix-favicon.png">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0B0F0E;
+    --bg2:     #0a0d0c;
+    --card:    #161D1A;
+    --card2:   #11160f;
+    --border:  #1E2622;
+    --volt:    #C6FF00;
+    --mint:    #39FF88;
+    --text:    #F5F7F5;
+    --muted:   #9CA3A0;
+    --danger:  #ff5c5c;
+    --warn:    #f5a623;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1;
+  }
+
+  ::selection { background: var(--volt); color: var(--bg); }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAVBAR ── */
+  nav.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background .3s, border-color .3s, backdrop-filter .3s;
+  }
+  nav.navbar.scrolled {
+    background: rgba(11,15,14,.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom-color: var(--border);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 18px #C6FF0055;
+    flex-shrink: 0;
+  }
+  .nav-logo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .nav-logo-text {
+    font-weight: 800;
+    font-size: 21px;
+    letter-spacing: -.02em;
+    color: var(--volt);
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+  }
+  .nav-links a {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--volt);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    transition: box-shadow .25s;
+  }
+  .nav-cta:hover { box-shadow: 0 0 24px #C6FF0066; }
+  .nav-ham {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .nav-ham span {
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    display: block;
+    transition: transform .3s, opacity .3s;
+  }
+  .nav-mobile {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 14px 24px 22px;
+  }
+  .nav-mobile.open { display: block; }
+  .nav-mobile a {
+    display: block;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 0;
+    transition: color .2s;
+  }
+  .nav-mobile a:hover { color: var(--text); }
+  .nav-mobile .mob-cta {
+    display: block;
+    margin-top: 8px;
+    text-align: center;
+    background: var(--volt);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 13px;
+    border-radius: 999px;
+  }
+
+  @media (max-width: 880px) {
+    .nav-links, nav .nav-cta:not(.mob-cta) { display: none !important; }
+    .nav-ham { display: flex !important; }
+  }
+
+  /* ── SECTIONS ── */
+  section { width: 100%; }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .container-sm {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes gymFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-12px); }
+  }
+  @keyframes gymPulse {
+    0%, 100% { opacity: .35; transform: scale(1); }
+    50%       { opacity: .7;  transform: scale(1.05); }
+  }
+  [data-animate] {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity .6s cubic-bezier(.2,.7,.2,1), transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  [data-animate].visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── SECTION BADGE ── */
+  .badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .badge-volt  { color: var(--volt); }
+  .badge-mint  { color: var(--mint); }
+
+  /* ── HERO ── */
+  #top {
+    position: relative;
+    padding: 90px 0 60px;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 760px;
+    height: 520px;
+    max-width: 120%;
+    background: radial-gradient(ellipse at center, #C6FF0022 0%, #39FF8810 35%, transparent 70%);
+    filter: blur(20px);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 48px;
+    justify-content: space-between;
+  }
+  .hero-copy { flex: 1 1 420px; min-width: 300px; }
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--volt);
+    background: #C6FF000f;
+    border: 1px solid #C6FF0033;
+    padding: 7px 14px;
+    border-radius: 999px;
+    letter-spacing: .02em;
+  }
+  .hero-pill::before { content: '●'; }
+  .hero-h1 {
+    margin: 22px 0 0;
+    font-size: clamp(38px, 6vw, 62px);
+    line-height: 1.04;
+    font-weight: 900;
+    letter-spacing: -.03em;
+    color: var(--text);
+  }
+  .hero-h1 span { color: var(--volt); }
+  .hero-p {
+    margin: 22px 0 0;
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  /* App store badges */
+  .store-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 34px;
+  }
+  .store-badge {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 20px;
+    cursor: not-allowed;
+    opacity: .62;
+  }
+  .store-badge-icon { font-size: 26px; line-height: 1; }
+  .store-badge-text { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
+  .store-badge-text small { font-size: 10px; color: var(--muted); letter-spacing: .04em; }
+  .store-badge-text strong { font-size: 17px; font-weight: 700; color: var(--text); }
+  .store-badge-soon {
+    position: absolute;
+    top: -9px;
+    right: -6px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    background: var(--volt);
+    color: var(--bg);
+    padding: 3px 7px;
+    border-radius: 999px;
+  }
+
+  /* Hero stats */
+  .hero-stats {
+    display: flex;
+    gap: 28px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .hero-stat-val { font-size: 26px; font-weight: 800; }
+  .hero-stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .hero-divider { width: 1px; background: var(--border); align-self: stretch; }
+
+  /* Phone mockup */
+  .hero-phone-wrap {
+    flex: 0 1 320px;
+    display: flex;
+    justify-content: center;
+    animation: gymFloat 6s ease-in-out infinite;
+  }
+  .hero-iphone-img {
+    width: 300px;
+    max-width: 100%;
+    border-radius: 40px;
+    box-shadow: 0 30px 80px -20px #000, 0 0 60px -20px #C6FF0033;
+    display: block;
+  }
+
+  /* ── PLATFORM TABS ── */
+  #platform { padding: 80px 0; }
+  .section-heading {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 14px;
+  }
+  .section-h2 {
+    margin: 14px 0 0;
+    font-size: clamp(28px, 4.5vw, 44px);
+    font-weight: 900;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+  .tab-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+    margin: 38px 0 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+    font-family: inherit;
+  }
+  .tab-btn.active { border-bottom-color: var(--volt); color: var(--text); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .tab-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tab-copy { flex: 1 1 340px; min-width: 280px; }
+  .tab-eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--volt);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 18px;
+  }
+  .feature-list { display: flex; flex-direction: column; gap: 16px; }
+  .feature-item { display: flex; gap: 13px; align-items: flex-start; }
+  .check-circle {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--volt);
+    color: var(--bg);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 900;
+  }
+  .feature-title { font-weight: 600; color: var(--text); font-size: 16px; }
+  .feature-desc  { color: var(--muted); font-size: 14px; margin-top: 2px; }
+
+  /* Tab mockups */
+  .tab-img-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 24px;
+  }
+  .tab-mockup-img {
+    width: 210px;
+    border-radius: 42px;
+    box-shadow:
+      0 48px 90px -20px rgba(0,0,0,0.9),
+      0 0 60px -18px rgba(198,255,0,0.22),
+      inset 0 0 0 1px rgba(255,255,255,0.05);
+    display: block;
+    transform: rotate(-4deg) translateY(0px);
+    animation: tabPhoneFloat 6s ease-in-out infinite;
+    transition: filter .3s;
+  }
+  .tab-mockup-img:hover {
+    filter: brightness(1.08);
+  }
+  @keyframes tabPhoneFloat {
+    0%, 100% { transform: rotate(-4deg) translateY(0px); }
+    50%       { transform: rotate(-2deg) translateY(-14px); }
+  }
+
+  .browser-mock {
+    flex: 1 1 360px;
+    min-width: 300px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 24px 60px -24px #000;
+  }
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .browser-url {
+    margin-left: 10px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .browser-body {
+    display: flex;
+    min-height: 230px;
+  }
+  .browser-sidebar {
+    flex: 0 0 96px;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sidebar-item {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 8px;
+    text-align: center;
+    border-radius: 8px;
+  }
+  .sidebar-item.active {
+    font-weight: 700;
+    color: var(--volt);
+    background: #C6FF0014;
+  }
+  .browser-main { flex: 1; padding: 16px; }
+
+  .chart-card {
+    background: var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .chart-card-label { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+
+  .stat-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-tile {
+    background: var(--border);
+    border-radius: 12px;
+    padding: 11px;
+  }
+  .stat-tile-label { font-size: 10px; color: var(--muted); }
+  .stat-tile-val   { font-size: 18px; font-weight: 800; margin-top: 4px; }
+
+  .rev-chart-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 24px 60px -24px #000;
+    flex: 1 1 360px;
+    min-width: 300px;
+  }
+  .rev-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .rev-chart-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .rev-chart-badge {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--border);
+    padding: 5px 10px;
+    border-radius: 8px;
+  }
+  .rev-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 160px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .rev-bar-group {
+    flex: 1;
+    display: flex;
+    gap: 5px;
+    align-items: flex-end;
+    height: 100%;
+  }
+  .rev-bar { flex: 1; border-radius: 5px 5px 0 0; }
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-dot { width: 11px; height: 11px; border-radius: 3px; }
+  .stat-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  /* Donut */
+  .donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .donut {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(var(--volt) 0 58%, var(--mint) 58% 82%, var(--border) 82% 100%);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .donut-inner {
+    width: 92px; height: 92px;
+    border-radius: 50%;
+    background: var(--card);
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+  .donut-num  { font-size: 22px; font-weight: 900; color: var(--text); }
+  .donut-sub  { font-size: 10px; color: var(--muted); }
+  .donut-legend { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 12px; }
+  .donut-legend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .donut-legend-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .donut-legend-val { font-weight: 700; color: var(--text); }
+
+  /* ── FEATURES ── */
+  #features { padding: 60px 0; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 18px;
+    margin-top: 44px;
+  }
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 26px;
+    transition: border-color .25s, transform .25s;
+  }
+  .feature-card:hover {
+    border-color: #C6FF0055;
+    transform: translateY(-4px);
+  }
+  .feature-card-icon { font-size: 30px; margin-bottom: 14px; }
+  .feature-card-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .feature-card-desc  { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+  /* ── WHY US ── */
+  #whyus { padding: 60px 0; }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    margin-top: 44px;
+  }
+  .why-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--volt);
+    border-radius: 18px;
+    padding: 28px;
+  }
+  .why-card-title { font-size: 19px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+  .why-card-desc  { color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+  /* ── COMPARE ── */
+  #compare { padding: 60px 0; }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--card);
+    margin-top: 44px;
+  }
+  table.vs {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+  table.vs thead tr {
+    background: var(--volt);
+  }
+  table.vs thead th {
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--bg);
+    text-align: center;
+  }
+  table.vs thead th:first-child { text-align: left; }
+  table.vs thead th:not(:first-child):not(:nth-child(2)) {
+    color: rgba(11,15,14,.7);
+    font-weight: 700;
+  }
+  table.vs tbody tr { border-top: 1px solid var(--border); }
+  table.vs tbody tr:nth-child(even) { background: #0b0f0e55; }
+  table.vs tbody td {
+    padding: 15px 20px;
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+    text-align: center;
+  }
+  table.vs tbody td:first-child { text-align: left; }
+  .tick-volt  { color: var(--volt); font-weight: 800; font-size: 16px; }
+  .tick-cross { color: var(--danger); font-weight: 800; font-size: 16px; }
+  .tick-warn  { color: var(--warn); font-size: 13px; font-weight: 600; }
+  .tick-gray  { color: var(--muted); font-size: 13px; font-weight: 600; }
+
+  /* ── PRICING ── */
+  #pricing { padding: 60px 0; }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    align-items: start;
+    margin-top: 44px;
+  }
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 32px;
+    position: relative;
+  }
+  .pricing-card.highlight {
+    background: var(--card2);
+    border: 2px solid var(--volt);
+    box-shadow: 0 0 40px -8px #C6FF0033;
+  }
+  .pricing-popular {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--volt);
+    color: var(--bg);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    padding: 5px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .pricing-tier-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .pricing-tier-name.volt { color: var(--volt); }
+  .pricing-tier-name.muted { color: var(--muted); }
+  .pricing-price {
+    margin: 14px 0 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .pricing-price-main {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--text);
+  }
+  .pricing-price-per { font-size: 16px; color: var(--muted); }
+  .pricing-divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .pricing-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+  .pricing-feature-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+  }
+  .pricing-card.highlight .pricing-feature-row { color: var(--text); }
+  .pricing-card:not(.highlight) .pricing-feature-row { color: var(--muted); }
+  .pricing-check { color: var(--volt); font-weight: 800; flex-shrink: 0; }
+
+  .btn-coming {
+    display: block;
+    text-align: center;
+    background: var(--border);
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px;
+    border-radius: 999px;
+    cursor: not-allowed;
+  }
+  .btn-volt {
+    display: block;
+    text-align: center;
+    background: var(--volt);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px;
+    border-radius: 999px;
+    transition: box-shadow .25s;
+  }
+  .btn-volt:hover { box-shadow: 0 0 24px #C6FF0066; }
+
+  /* ── CONTACT ── */
+  #contact { padding: 60px 0 80px; }
+  .contact-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: stretch;
+    margin-top: 44px;
+  }
+  .contact-form-wrap {
+    flex: 1 1 420px;
+    min-width: 300px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 30px;
+  }
+  .contact-info-col {
+    flex: 0 1 320px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .form-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 13px 15px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus { border-color: var(--volt); }
+  .form-input::placeholder { color: #4a5450; }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+  .form-fields { display: flex; flex-direction: column; gap: 16px; }
+  .form-submit {
+    margin-top: 6px;
+    width: 100%;
+    background: var(--volt);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px;
+    border-radius: 999px;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: box-shadow .25s;
+  }
+  .form-submit:hover { box-shadow: 0 0 24px #C6FF0066; }
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .form-success.show { display: block; }
+  .form-success-icon { font-size: 48px; margin-bottom: 16px; }
+  .form-success-title { font-size: 20px; font-weight: 800; color: var(--volt); margin-bottom: 8px; }
+  .form-success-msg { color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+  .contact-info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .contact-info-card.volt-card {
+    background: var(--card2);
+    border-color: #C6FF0033;
+  }
+  .contact-icon {
+    font-size: 24px;
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    background: var(--border);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .contact-info-label { font-size: 12px; color: var(--muted); }
+  .contact-info-val   { font-size: 15px; font-weight: 600; color: var(--text); margin-top: 3px; }
+  .contact-waitlist-title { font-size: 15px; font-weight: 700; color: var(--volt); margin-bottom: 6px; }
+  .contact-waitlist-desc  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 24px 30px;
+  }
+  .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 36px;
+    justify-content: space-between;
+  }
+  .footer-brand { flex: 1 1 280px; min-width: 240px; }
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .footer-logo-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .footer-logo-icon img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .footer-logo-text { font-weight: 800; font-size: 20px; color: var(--volt); }
+  .footer-tagline { color: var(--muted); font-size: 14px; max-width: 300px; line-height: 1.6; }
+  .footer-socials { display: flex; gap: 10px; margin-top: 18px; }
+  .footer-social {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color .2s;
+  }
+  .footer-social:hover { border-color: var(--volt); }
+  .footer-nav-col { display: flex; flex-direction: column; gap: 12px; }
+  .footer-nav-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 4px;
+  }
+  .footer-nav-col a {
+    color: var(--muted);
+    font-size: 14px;
+    transition: color .2s;
+  }
+  .footer-nav-col a:hover { color: var(--volt); }
+  .footer-app-col { display: flex; flex-direction: column; gap: 12px; }
+  .footer-app-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 4px;
+  }
+  .footer-app-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    cursor: not-allowed;
+    opacity: .6;
+  }
+  .footer-app-badge-text small  { font-size: 9px; color: var(--muted); display: block; }
+  .footer-app-badge-text strong { font-size: 14px; font-weight: 700; color: var(--text); }
+  .footer-divider { height: 1px; background: var(--border); margin: 32px 0 20px; }
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copyright { font-size: 13px; color: var(--muted); }
+  .footer-legal { display: flex; gap: 22px; }
+  .footer-legal a {
+    color: var(--muted);
+    font-size: 13px;
+    transition: color .2s;
+  }
+  .footer-legal a:hover { color: var(--volt); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .hero-stats { gap: 16px; }
+    .hero-divider { display: none; }
+    .tab-btn { font-size: 13px; padding: 12px 12px; }
+    .stat-grid-3 { grid-template-columns: 1fr 1fr; }
+    table.vs { min-width: 480px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">
+      <span class="nav-logo-icon"><img src="assets/gymblix-favicon.png" alt="Gymblix"></span>
+      <span class="nav-logo-text">Gymblix</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#whyus">Why Us</a>
+      <a href="#compare">Compare</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#contact" class="nav-cta">Get App</a>
+    <button class="nav-ham" id="navHam" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile" id="navMobile">
+    <a href="#features"  onclick="closeMenu()">Features</a>
+    <a href="#pricing"   onclick="closeMenu()">Pricing</a>
+    <a href="#whyus"     onclick="closeMenu()">Why Us</a>
+    <a href="#compare"   onclick="closeMenu()">Compare</a>
+    <a href="#contact"   onclick="closeMenu()">Contact</a>
+    <a href="#contact"   onclick="closeMenu()" class="mob-cta">Get App</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<header id="top">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-copy" data-animate>
+        <span class="hero-pill">Built for modern fitness businesses</span>
+        <h1 class="hero-h1">The Complete <span>Gym Management</span> Platform</h1>
+        <p class="hero-p">Manage members, track attendance, handle payments, and grow your gym — all from one powerful SaaS platform built for modern fitness businesses.</p>
+
+        <div class="store-badges">
+          <div class="store-badge" title="Coming Soon">
+            <span class="store-badge-icon">🍎</span>
+            <span class="store-badge-text">
+              <small>DOWNLOAD ON THE</small>
+              <strong>App Store</strong>
+            </span>
+            <span class="store-badge-soon">SOON</span>
+          </div>
+          <div class="store-badge" title="Coming Soon">
+            <span class="store-badge-icon" style="color:#39FF88;font-size:22px;">▶</span>
+            <span class="store-badge-text">
+              <small>GET IT ON</small>
+              <strong>Google Play</strong>
+            </span>
+            <span class="store-badge-soon">SOON</span>
+          </div>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-val" style="color:var(--volt);">All-in-One</div>
+            <div class="hero-stat-label">Mobile + Web Admin</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div>
+            <div class="hero-stat-val" style="color:var(--mint);">Real-Time</div>
+            <div class="hero-stat-label">Sync across devices</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div>
+            <div class="hero-stat-val">Role-Aware</div>
+            <div class="hero-stat-label">Admin · Manager · Trainer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone mockup — Admin Dashboard iPhone 15 Scroll Mockup from Stitch -->
+      <div class="hero-phone-wrap" data-animate>
+        <img class="hero-iphone-img" src="assets/dashboard-iphone.png" alt="Gymblix Admin Dashboard" draggable="false">
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════ PLATFORM TABS ═══════════════════════ -->
+<section id="platform">
+  <div class="container">
+    <div class="section-heading" data-animate>
+      <span class="badge badge-mint">Everything You Need to Run Your Gym</span>
+      <h2 class="section-h2">One Platform. Every Role. Zero Chaos.</h2>
+    </div>
+
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="setTab(0)">Mobile App</button>
+      <button class="tab-btn"        onclick="setTab(1)">Member Management</button>
+      <button class="tab-btn"        onclick="setTab(2)">Finance &amp; Inventory</button>
+      <button class="tab-btn"        onclick="setTab(3)">Reports &amp; Analytics</button>
+    </div>
+
+    <!-- Tab 0 — Mobile App -->
+    <div class="tab-panel active" id="tab0">
+      <div class="tab-content">
+        <div class="tab-copy">
+          <div class="tab-eyebrow">Mobile App · Members &amp; Trainers</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">QR Code Attendance</div><div class="feature-desc">Check-in / check-out in seconds</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Member Profiles &amp; Expiry Tracking</div><div class="feature-desc">Full member history at a glance</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Payment Collection via QR</div><div class="feature-desc">Accept renewals on the spot</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Digital Invoices</div><div class="feature-desc">Auto-generate &amp; share instantly</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Push Notifications for Renewals</div><div class="feature-desc">Never miss an expiry</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Trainer-to-Admin Verification</div><div class="feature-desc">Approval workflow built in</div></div></div>
+          </div>
+        </div>
+        <div class="tab-img-wrap">
+          <img class="tab-mockup-img" src="assets/dashboard-full.png" alt="Gymblix Mobile App Dashboard">
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 1 — Web Admin Panel -->
+    <div class="tab-panel" id="tab1">
+      <div class="tab-content">
+        <div class="tab-copy">
+          <div class="tab-eyebrow">Member Management</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Full Member CRUD</div><div class="feature-desc">Add, edit, search, filter members</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Active / Expiring / Expired Filters</div><div class="feature-desc">Spot at-risk members instantly</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Membership Renewal</div><div class="feature-desc">One-tap renewal with package selection</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Trainer Verification Workflow</div><div class="feature-desc">Trainer adds → Admin/Manager approves</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Student Payment History</div><div class="feature-desc">Full per-member payment timeline</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Expiry Alerts</div><div class="feature-desc">Auto push notifications before lapse</div></div></div>
+          </div>
+        </div>
+        <div class="tab-img-wrap">
+          <img class="tab-mockup-img" src="assets/student-list.png" alt="Gymblix Member Management">
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2 — Finance & Inventory -->
+    <div class="tab-panel" id="tab2">
+      <div class="tab-content">
+        <div class="tab-copy">
+          <div class="tab-eyebrow">Finance &amp; Inventory</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Expense Tracking</div><div class="feature-desc">With receipt uploads</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Trainer Salary Management</div><div class="feature-desc">Track and pay your team</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Supplement &amp; Inventory Store</div><div class="feature-desc">Stock in / out management</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Revenue vs Expense Charts</div><div class="feature-desc">Today / Monthly / Yearly</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Package Management</div><div class="feature-desc">Create &amp; assign memberships</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Invoice Generation &amp; Sharing</div><div class="feature-desc">One tap to send</div></div></div>
+          </div>
+        </div>
+        <div class="tab-img-wrap">
+          <img class="tab-mockup-img" src="assets/web-inventory-ref.png" alt="Gymblix Finance &amp; Inventory">
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3 — Reports & Analytics -->
+    <div class="tab-panel" id="tab3">
+      <div class="tab-content">
+        <div class="tab-copy">
+          <div class="tab-eyebrow">Reports &amp; Analytics</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Revenue, Expense &amp; Profit Trends</div><div class="feature-desc">Visualised over time</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Date Range Filters</div><div class="feature-desc">Today · Month · 3/6 Months · Custom</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Expiry List</div><div class="feature-desc">See who's about to lapse</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Attendance History</div><div class="feature-desc">Monthly summaries</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Student Growth Tracking</div><div class="feature-desc">Watch your gym scale</div></div></div>
+            <div class="feature-item"><span class="check-circle">✓</span><div><div class="feature-title">Export-Ready Reports</div><div class="feature-desc">Share with stakeholders</div></div></div>
+          </div>
+        </div>
+        <div class="tab-img-wrap">
+          <img class="tab-mockup-img" src="assets/tab-reports-iphone.png" alt="Gymblix Reports &amp; Analytics">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FEATURES ═══════════════════════ -->
+<section id="features">
+  <div class="container">
+    <div class="section-heading" data-animate>
+      <span class="badge badge-mint">Features</span>
+      <h2 class="section-h2">Built for Every Role in Your Gym</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" data-animate><div class="feature-card-icon">🏋️</div><div class="feature-card-title">Member Management</div><div class="feature-card-desc">Full CRUD, search, filter, expiry alerts</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">📲</div><div class="feature-card-title">QR Attendance</div><div class="feature-card-desc">Instant check-in/check-out with QR codes</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">💰</div><div class="feature-card-title">Payment &amp; Invoicing</div><div class="feature-card-desc">Collect payments, auto-generate invoices</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">📦</div><div class="feature-card-title">Supplement Store</div><div class="feature-card-desc">Manage inventory, stock-in/out, sales</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">📊</div><div class="feature-card-title">Reports &amp; Analytics</div><div class="feature-card-desc">Revenue, expense, profit charts with custom ranges</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">👥</div><div class="feature-card-title">Staff &amp; Role Management</div><div class="feature-card-desc">Admin, Manager, Trainer with role-gated access</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">🔔</div><div class="feature-card-title">Push Notifications</div><div class="feature-card-desc">Firebase-powered renewal alerts &amp; announcements</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">🏷️</div><div class="feature-card-title">Package Management</div><div class="feature-card-desc">Create, assign, and track membership packages</div></div>
+      <div class="feature-card" data-animate><div class="feature-card-icon">🔐</div><div class="feature-card-title">Secure Auth</div><div class="feature-card-desc">Supabase-powered auth with role-based routing</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ WHY US ═══════════════════════ -->
+<section id="whyus">
+  <div class="container">
+    <div class="section-heading" data-animate>
+      <span class="badge badge-mint">Why Choose Us</span>
+      <h2 class="section-h2">Why Gymblix Beats the Rest</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card" data-animate><div class="why-card-title">All-in-One, Not Add-On</div><div class="why-card-desc">Built with every gym function included — no patchwork of third-party tools.</div></div>
+      <div class="why-card" data-animate><div class="why-card-title">Role-Aware Design</div><div class="why-card-desc">Every screen adapts to who's using it. Admin, Manager, Trainer — each gets exactly what they need.</div></div>
+      <div class="why-card" data-animate><div class="why-card-title">Offline-First Mobile</div><div class="why-card-desc">React Native mobile app that works seamlessly even with poor connectivity.</div></div>
+      <div class="why-card" data-animate><div class="why-card-title">Real-Time Sync</div><div class="why-card-desc">Supabase-powered backend — changes on mobile reflect on web admin instantly.</div></div>
+      <div class="why-card" data-animate><div class="why-card-title">Built-in Billing</div><div class="why-card-desc">Razorpay subscription payments, invoices, and expense tracking out of the box.</div></div>
+      <div class="why-card" data-animate><div class="why-card-title">Your Brand, Your Gym</div><div class="why-card-desc">White-label ready. Your gym's name, your colors, your experience.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ COMPARE ═══════════════════════ -->
+<section id="compare">
+  <div class="container-sm">
+    <div class="section-heading" data-animate>
+      <span class="badge badge-mint">Gymblix vs Others</span>
+      <h2 class="section-h2">See How We Compare</h2>
+    </div>
+    <div class="table-wrap" data-animate>
+      <table class="vs">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Gymblix</th>
+            <th>Generic Gym Apps</th>
+            <th>Spreadsheets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>QR Attendance</td>         <td class="tick-volt">✓</td>  <td class="tick-warn">Partial</td>   <td class="tick-cross">✕</td></tr>
+          <tr><td>Role-Based Access</td>     <td class="tick-volt">✓</td>  <td class="tick-cross">✕</td>        <td class="tick-cross">✕</td></tr>
+          <tr><td>Supplement Inventory</td>  <td class="tick-volt">✓</td>  <td class="tick-cross">✕</td>        <td class="tick-cross">✕</td></tr>
+          <tr><td>Web + Mobile Both</td>     <td class="tick-volt">✓</td>  <td class="tick-warn">Web Only</td>  <td class="tick-cross">✕</td></tr>
+          <tr><td>Razorpay Billing Built-in</td><td class="tick-volt">✓</td><td class="tick-cross">✕</td>       <td class="tick-cross">✕</td></tr>
+          <tr><td>Invoice Generation</td>    <td class="tick-volt">✓</td>  <td class="tick-warn">Basic</td>     <td class="tick-cross">✕</td></tr>
+          <tr><td>Push Notifications</td>    <td class="tick-volt">✓</td>  <td class="tick-warn">Paid Add-on</td><td class="tick-cross">✕</td></tr>
+          <tr><td>Report Analytics</td>      <td class="tick-volt">✓</td>  <td class="tick-warn">Limited</td>   <td class="tick-cross">✕</td></tr>
+          <tr><td>Trainer Salary Tracking</td><td class="tick-volt">✓</td> <td class="tick-cross">✕</td>        <td class="tick-gray">Manual</td></tr>
+          <tr><td>Custom Packages</td>       <td class="tick-volt">✓</td>  <td class="tick-warn">Partial</td>   <td class="tick-cross">✕</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PRICING ═══════════════════════ -->
+<section id="pricing">
+  <div class="container-sm">
+    <div class="section-heading" data-animate>
+      <span class="badge badge-mint">Pricing</span>
+      <h2 class="section-h2">Simple, Transparent Pricing</h2>
+      <p style="margin-top:14px;color:var(--muted);font-size:17px;">Start free. Upgrade when you're ready.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Starter -->
+      <div class="pricing-card" data-animate>
+        <div class="pricing-tier-name muted">Starter</div>
+        <div class="pricing-price"><span class="pricing-price-main">Free</span></div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Up to 30 members</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>1 Admin account</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Basic attendance &amp; reports</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Mobile app access</div>
+        </div>
+        <div class="btn-coming">Coming Soon</div>
+      </div>
+      <!-- Growth (highlighted) -->
+      <div class="pricing-card highlight" data-animate>
+        <span class="pricing-popular">MOST POPULAR</span>
+        <div class="pricing-tier-name volt">Growth</div>
+        <div class="pricing-price">
+          <span class="pricing-price-main">₹999</span>
+          <span class="pricing-price-per">/month</span>
+        </div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Unlimited members</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Admin + Manager + 5 Trainers</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Full reports &amp; analytics</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Supplement inventory</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Invoice generation</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Push notifications</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Priority support</div>
+        </div>
+        <div class="btn-coming">Coming Soon</div>
+      </div>
+      <!-- Enterprise -->
+      <div class="pricing-card" data-animate>
+        <div class="pricing-tier-name muted">Enterprise</div>
+        <div class="pricing-price"><span class="pricing-price-main">Custom</span></div>
+        <div class="pricing-divider"></div>
+        <div class="pricing-features">
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Multi-gym / chain support</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>White-label branding</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Dedicated support</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>Custom integrations</div>
+          <div class="pricing-feature-row"><span class="pricing-check">✓</span>SLA guarantee</div>
+        </div>
+        <a href="#contact" class="btn-volt">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CONTACT ═══════════════════════ -->
+<section id="contact">
+  <div class="container-sm">
+    <div class="section-heading" data-animate>
+      <span class="badge badge-mint">Contact Us</span>
+      <h2 class="section-h2">Ready to Transform Your Gym?</h2>
+      <p style="margin-top:14px;color:var(--muted);font-size:17px;">Be the first to know when we launch. Drop your details below.</p>
+    </div>
+    <div class="contact-grid">
+      <!-- Form -->
+      <div class="contact-form-wrap" data-animate>
+        <form id="contactForm" onsubmit="handleSubmit(event)">
+          <div class="form-fields">
+            <div class="form-group">
+              <label class="form-label" for="fname">Name</label>
+              <input class="form-input" type="text" id="fname" required placeholder="Your full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="femail">Email</label>
+              <input class="form-input" type="email" id="femail" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fgym">Gym Name</label>
+              <input class="form-input" type="text" id="fgym" placeholder="Your gym's name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fmsg">Message</label>
+              <textarea class="form-input" id="fmsg" placeholder="Tell us about your gym..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send Message →</button>
+          </div>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <div class="form-success-icon">✅</div>
+          <div class="form-success-title">Message sent!</div>
+          <div class="form-success-msg">Thanks for reaching out. We'll get back to you soon.</div>
+        </div>
+      </div>
+      <!-- Info -->
+      <div class="contact-info-col" data-animate>
+        <div class="contact-info-card">
+          <div class="contact-icon">📧</div>
+          <div>
+            <div class="contact-info-label">Email</div>
+            <div class="contact-info-val">hello@gymblix.app</div>
+          </div>
+        </div>
+        <div class="contact-info-card">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-info-label">Location</div>
+            <div class="contact-info-val">India</div>
+          </div>
+        </div>
+        <div class="contact-info-card">
+          <div class="contact-icon">💬</div>
+          <div>
+            <div class="contact-info-label">WhatsApp</div>
+            <div class="contact-info-val">+91 00000 00000</div>
+          </div>
+        </div>
+        <div class="contact-info-card volt-card">
+          <div>
+            <div class="contact-waitlist-title">Launching soon across India</div>
+            <div class="contact-waitlist-desc">Join the waitlist and get early access pricing for your gym.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="footer-logo-icon"><img src="assets/gymblix-favicon.png" alt="Gymblix"></span>
+          <span class="footer-logo-text">Gymblix</span>
+        </div>
+        <div class="footer-tagline">Gymblix — Built for Gyms. Loved by Trainers.</div>
+        <div class="footer-socials">
+          <a class="footer-social" href="#" aria-label="Instagram">📷</a>
+          <a class="footer-social" href="#" aria-label="LinkedIn">in</a>
+          <a class="footer-social" href="#" aria-label="YouTube">▶</a>
+        </div>
+      </div>
+      <div class="footer-nav-col">
+        <div class="footer-nav-heading">Navigate</div>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#whyus">Why Us</a>
+        <a href="#compare">Compare</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-app-col">
+        <div class="footer-app-heading">Get the App</div>
+        <div class="footer-app-badge" title="Coming Soon">
+          <span style="font-size:15px;">🔒</span>
+          <div class="footer-app-badge-text">
+            <small>SOON ON</small>
+            <strong>App Store</strong>
+          </div>
+        </div>
+        <div class="footer-app-badge" title="Coming Soon">
+          <span style="font-size:15px;">🔒</span>
+          <div class="footer-app-badge-text">
+            <small>SOON ON</small>
+            <strong>Google Play</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <div class="footer-copyright">© 2026 Gymblix. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Navbar scroll ──────────────────────────────────────
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 24);
+  }, { passive: true });
+
+  // ── Mobile menu ───────────────────────────────────────
+  const navHam    = document.getElementById('navHam');
+  const navMobile = document.getElementById('navMobile');
+  navHam.addEventListener('click', () => {
+    navMobile.classList.toggle('open');
+  });
+  function closeMenu() {
+    navMobile.classList.remove('open');
+  }
+
+  // ── Tabs ──────────────────────────────────────────────
+  function setTab(index) {
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.tab-panel').forEach((panel, i) => {
+      panel.classList.toggle('active', i === index);
+    });
+  }
+
+  // ── Scroll-triggered animations ───────────────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        // stagger siblings
+        const siblings = Array.from(e.target.parentElement.querySelectorAll('[data-animate]'));
+        const idx = siblings.indexOf(e.target);
+        const delay = (idx % 3) * 70;
+        e.target.style.transitionDelay = delay + 'ms';
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('[data-animate]').forEach(el => io.observe(el));
+
+  // ── Contact form ──────────────────────────────────────
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('contactForm').style.display = 'none';
+    const success = document.getElementById('formSuccess');
+    success.classList.add('show');
+  }
+
+
+</script>
+
+</body>
+</html>
