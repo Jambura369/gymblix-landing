@@ -833,6 +833,14 @@
     transition: box-shadow .25s;
   }
   .form-submit:hover { box-shadow: 0 0 24px #C6FF0066; }
+  /* Contact call-to-action (replaces hidden form) */
+  .contact-cta { text-align: center; padding: 18px 6px; }
+  .contact-cta-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+  .contact-cta-desc { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+  .contact-call-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: auto; text-decoration: none; padding: 14px 32px;
+  }
   .form-success {
     display: none;
     text-align: center;
@@ -1100,7 +1108,7 @@
           </div>
         </div>
         <div class="tab-img-wrap">
-          <img class="tab-mockup-img" src="assets/dashboard-full.png" alt="Gymblix Mobile App Dashboard">
+          <img class="tab-mockup-img" src="assets/trainer-dashboard.png" alt="Gymblix Mobile App — Trainer &amp; Member view">
         </div>
       </div>
     </div>
@@ -1311,6 +1319,7 @@
     <div class="contact-grid">
       <!-- Form -->
       <div class="contact-form-wrap" data-animate>
+        <!-- Contact form hidden for now — kept here for future use, do not delete
         <form id="contactForm" onsubmit="handleSubmit(event)">
           <div class="form-fields">
             <div class="form-group">
@@ -1329,13 +1338,21 @@
               <label class="form-label" for="fmsg">Message</label>
               <textarea class="form-input" id="fmsg" placeholder="Tell us about your gym..."></textarea>
             </div>
-            <button type="submit" class="form-submit">Send Message →</button>
+            <button type="submit" class="form-submit">Send Message &rarr;</button>
           </div>
         </form>
         <div class="form-success" id="formSuccess">
-          <div class="form-success-icon">✅</div>
+          <div class="form-success-icon">&#9989;</div>
           <div class="form-success-title">Message sent!</div>
           <div class="form-success-msg">Thanks for reaching out. We'll get back to you soon.</div>
+        </div>
+        -->
+
+        <!-- Call-to-action: direct call button -->
+        <div class="contact-cta">
+          <div class="contact-cta-title">Talk to us directly</div>
+          <div class="contact-cta-desc">Have a question or want a demo for your gym? Give us a call — we're happy to help.</div>
+          <a href="tel:+917001895484" class="form-submit contact-call-btn">📞 Call Now</a>
         </div>
       </div>
       <!-- Info -->
@@ -1358,7 +1375,7 @@
           <div class="contact-icon">💬</div>
           <div>
             <div class="contact-info-label">WhatsApp</div>
-            <div class="contact-info-val">+91 00000 00000</div>
+            <div class="contact-info-val"><a href="https://wa.me/917001895484" target="_blank" rel="noopener" style="color:var(--volt);text-decoration:none;font-weight:700;">Chat on WhatsApp →</a></div>
           </div>
         </div>
         <div class="contact-info-card volt-card">
