@@ -1,0 +1,8 @@
+{
+  // Cloudflare Workers config: serves this folder as a static website.
+  "name": "gymblix-landing",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./"
+  }
+}
