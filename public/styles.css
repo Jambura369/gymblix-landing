@@ -261,3 +261,48 @@ section.alt { background: var(--bg-2); border-top: 1px solid var(--border); bord
   .why-name { flex-direction: column; text-align: center; gap: 20px; }
   .why-name img { width: 96px; height: 96px; }
 }
+
+/* ── Problem → solution ─────────────────── */
+.ps-list { display: grid; gap: 14px; max-width: 980px; margin: 0 auto; }
+.ps {
+  display: grid; grid-template-columns: 0.85fr 1.15fr;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.ps-problem, .ps-solution { display: flex; gap: 14px; padding: 22px 24px; align-items: flex-start; }
+.ps-problem { background: rgba(255, 92, 92, 0.05); border-right: 1px solid var(--border); }
+.ps-problem p { font-size: 17px; font-weight: 600; line-height: 1.45; color: var(--text); }
+.ps-mark { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }
+.ps-mark.bad { background: rgba(255, 92, 92, 0.14); color: #FF7A7A; }
+.ps-mark.good { background: rgba(198, 255, 0, 0.14); color: var(--volt); }
+.ps-solution h3 { font-size: 16px; font-weight: 800; color: var(--volt); margin-bottom: 4px; }
+.ps-solution p { color: var(--muted); font-size: 14.5px; }
+.ps-solution .ps-result { color: var(--text); font-weight: 600; margin-top: 8px; }
+.ps-more { text-align: center; color: var(--muted); font-size: 14px; max-width: 700px; margin: 28px auto 0; }
+
+/* ── Loss calculator ────────────────────── */
+.calc {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0; max-width: 900px; margin: 0 auto;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.calc-inputs { display: grid; gap: 18px; padding: 28px; }
+.calc-inputs label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.calc-inputs input, .calc-inputs select {
+  font: inherit; font-size: 18px; font-weight: 700; color: var(--text);
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; width: 100%;
+}
+.calc-inputs input:focus, .calc-inputs select:focus { outline: 2px solid var(--volt); outline-offset: 1px; }
+.calc-result { padding: 28px; background: rgba(198, 255, 0, 0.06); border-left: 1px solid var(--border); }
+.calc-label { color: var(--muted); font-weight: 600; }
+.calc-big { font-size: clamp(36px, 6vw, 52px); font-weight: 900; color: var(--volt); letter-spacing: -1px; line-height: 1.1; margin: 4px 0 12px; }
+.calc-big small { font-size: 16px; font-weight: 600; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.calc-sub { color: var(--text); font-size: 15px; margin-bottom: 8px; }
+.calc-note { color: var(--muted); font-size: 12px; margin-top: 14px; }
+
+@media (max-width: 720px) {
+  .ps, .calc { grid-template-columns: 1fr; }
+  .ps-problem { border-right: 0; border-bottom: 1px solid var(--border); }
+  .ps-problem, .ps-solution { padding: 18px; }
+  .ps-problem p { font-size: 16px; }
+  .calc-result { border-left: 0; border-top: 1px solid var(--border); }
+  .calc-inputs, .calc-result { padding: 22px 18px; }
+}
