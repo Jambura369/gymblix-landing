@@ -319,3 +319,34 @@ section.alt { background: var(--bg-2); border-top: 1px solid var(--border); bord
   .calc-result { border-left: 0; border-top: 1px solid var(--border); }
   .calc-inputs, .calc-result { padding: 22px 18px; }
 }
+
+/* ── FAQ ─────────────────────────────────── */
+.faq { max-width: 780px; margin: 0 auto; display: grid; gap: 10px; }
+.faq details { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 0 20px; }
+.faq summary {
+  cursor: pointer; list-style: none; padding: 18px 28px 18px 0; position: relative;
+  font-weight: 700; font-size: 16px; color: var(--text);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  color: var(--volt); font-size: 22px; font-weight: 600;
+}
+.faq details[open] summary::after { content: "–"; }
+.faq summary:focus-visible { outline: 2px solid var(--volt); outline-offset: 4px; border-radius: 6px; }
+.faq details p { color: var(--muted); font-size: 15px; padding: 0 0 18px; }
+
+/* ── Floating WhatsApp button ───────────── */
+.wa-float {
+  position: fixed; right: 16px; bottom: 16px; z-index: 20;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--volt); color: var(--on-volt);
+  font-weight: 800; font-size: 15px; padding: 12px 18px; border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+.wa-float:hover { text-decoration: none; transform: translateY(-1px); }
+.wa-float:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+@media (max-width: 720px) {
+  .wa-float { right: 12px; bottom: 12px; padding: 12px 16px; }
+  .site-footer { padding-bottom: 84px; }
+}

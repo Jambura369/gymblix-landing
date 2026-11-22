@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gymblix.com/sitemap.xml
