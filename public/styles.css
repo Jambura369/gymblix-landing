@@ -350,3 +350,11 @@ section.alt { background: var(--bg-2); border-top: 1px solid var(--border); bord
   .wa-float { right: 12px; bottom: 12px; padding: 12px 16px; }
   .site-footer { padding-bottom: 84px; }
 }
+
+/* ── Demo video ─────────────────────────── */
+.demo-frame {
+  width: min(340px, 100%); margin: 0 auto; padding: 10px; border-radius: 36px;
+  background: #1A211E; border: 1px solid var(--border);
+  box-shadow: 0 30px 80px rgba(198, 255, 0, 0.12);
+}
+.demo-frame video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border-radius: 28px; background: var(--bg); }
