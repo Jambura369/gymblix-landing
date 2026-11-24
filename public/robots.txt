@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /checkin
 
 Sitemap: https://gymblix.com/sitemap.xml
