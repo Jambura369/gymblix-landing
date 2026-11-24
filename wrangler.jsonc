@@ -2,11 +2,16 @@
   // Cloudflare Workers config: serves ./public as a static website.
   "name": "gymblix-landing",
   "compatibility_date": "2026-05-01",
-  // Only used for .mp4 files (adds byte-range support for Safari video).
+  // Only runs for the routes in run_worker_first (see src/worker.js).
   "main": "src/worker.js",
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/assets/*.mp4"]
-  }
+    "run_worker_first": ["/assets/*.mp4", "/api/*"]
+  },
+  // Demo form emails. Needs Email Routing on gymblix.com with
+  // gymblix.app@gmail.com added and verified as a destination address.
+  "send_email": [
+    {"name": "LEAD_EMAIL", "destination_address": "gymblix.app@gmail.com"}
+  ]
 }

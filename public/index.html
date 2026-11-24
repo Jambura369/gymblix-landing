@@ -403,13 +403,46 @@
 
   <section id="contact">
     <div class="container">
-      <div class="contact-card">
-        <h2>Questions? We're here to help.</h2>
-        <p>Message us on WhatsApp for a quick demo, or email us anytime.</p>
-        <div class="contact-actions">
-          <a class="btn btn-primary" href="https://wa.me/917001895484?text=Hi%2C%20I%20want%20a%20free%20demo%20of%20Gymblix%20for%20my%20gym.%0AGym%20name%3A%0ACity%3A%0ANumber%20of%20members%3A" target="_blank" rel="noopener">WhatsApp us</a>
-          <a class="btn btn-ghost" href="tel:+917001895484">Call +91 70018 95484</a>
-          <a class="btn btn-ghost" href="mailto:gymblix.app@gmail.com">gymblix.app@gmail.com</a>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h2>Book a free demo</h2>
+          <p>Tell us about your gym. We'll WhatsApp or call you within 24 hours and set it up with you.</p>
+
+          <form id="demo-form" class="lead-form" action="/api/lead" method="post" novalidate>
+            <div class="lf-row">
+              <label>Your name<input name="name" autocomplete="name" required maxlength="80"></label>
+              <label>Gym name<input name="gym" autocomplete="organization" required maxlength="100"></label>
+            </div>
+            <div class="lf-row">
+              <label>City<input name="city" autocomplete="address-level2" required maxlength="60"></label>
+              <label>WhatsApp / phone number<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="16" placeholder="98xxxxxxxx"></label>
+            </div>
+            <label>How many members?
+              <select name="members" required>
+                <option value="" disabled selected>Choose one</option>
+                <option>Under 50</option>
+                <option>50 – 150</option>
+                <option>150 – 500</option>
+                <option>500+</option>
+              </select>
+            </label>
+            <label>Anything you want to ask? <span class="lf-opt">(optional)</span><textarea name="message" rows="3" maxlength="600"></textarea></label>
+            <!-- Honeypot: hidden from people, bots fill it in -->
+            <div class="lf-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+            <button class="btn btn-primary lf-submit" type="submit">Request my free demo</button>
+            <p class="lf-status" role="status" aria-live="polite"></p>
+            <p class="lf-note">We only use these details to contact you about Gymblix. See our <a href="privacy.html">privacy policy</a>.</p>
+          </form>
+        </div>
+
+        <div class="contact-card contact-side">
+          <h3>Prefer to talk now?</h3>
+          <p>Message or call us directly.</p>
+          <div class="contact-actions">
+            <a class="btn btn-ghost" href="https://wa.me/917001895484?text=Hi%2C%20I%20want%20a%20free%20demo%20of%20Gymblix%20for%20my%20gym.%0AGym%20name%3A%0ACity%3A%0ANumber%20of%20members%3A" target="_blank" rel="noopener">WhatsApp us</a>
+            <a class="btn btn-ghost" href="tel:+917001895484">Call +91 70018 95484</a>
+            <a class="btn btn-ghost" href="mailto:gymblix.app@gmail.com">gymblix.app@gmail.com</a>
+          </div>
         </div>
       </div>
     </div>
@@ -464,6 +497,41 @@
     }
     [m, f, r].forEach(function (el) { el.addEventListener('input', calc); });
     calc();
+  })();
+
+  // Demo request form: posts to /api/lead (Cloudflare Worker emails it to us)
+  (function () {
+    var form = document.getElementById('demo-form');
+    if (!form) return;
+    var status = form.querySelector('.lf-status');
+    var btn = form.querySelector('.lf-submit');
+    function show(msg, ok) { status.textContent = msg; status.className = 'lf-status ' + (ok ? 'ok' : 'err'); }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var data = Object.fromEntries(new FormData(form).entries());
+      var phone = (data.phone || '').replace(/[^0-9]/g, '').replace(/^(91|0)(?=\d{10}$)/, '');
+      if (!data.name.trim() || !data.gym.trim() || !data.city.trim() || !data.members) {
+        show('Please fill in every field marked above.', false); return;
+      }
+      if (!/^[6-9]\d{9}$/.test(phone)) { show('Please enter a valid 10-digit Indian mobile number.', false); return; }
+      btn.disabled = true; btn.textContent = 'Sending…'; show('', true);
+      fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (res.ok) {
+            form.reset();
+            show('Thank you! We\'ll WhatsApp or call you within 24 hours.', true);
+            btn.textContent = 'Request sent ✓';
+          } else {
+            show((res.j && res.j.error) || 'Something went wrong. Please WhatsApp us instead.', false);
+            btn.disabled = false; btn.textContent = 'Request my free demo';
+          }
+        })
+        .catch(function () {
+          show('No internet connection? Please try again, or WhatsApp us.', false);
+          btn.disabled = false; btn.textContent = 'Request my free demo';
+        });
+    });
   })();
 </script>
 </body>
