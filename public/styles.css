@@ -358,3 +358,10 @@ section.alt { background: var(--bg-2); border-top: 1px solid var(--border); bord
   box-shadow: 0 30px 80px rgba(198, 255, 0, 0.12);
 }
 .demo-frame video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border-radius: 28px; background: var(--bg); }
+
+/* Hero shows a real app screenshot. On phones the demo video sits right
+   below the hero, so the screenshot is hidden there to avoid two phones in a row. */
+.phone img { display: block; width: 100%; height: auto; border-radius: 28px; }
+@media (max-width: 720px) {
+  .hero .phone { display: none; }
+}
