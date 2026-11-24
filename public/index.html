@@ -417,15 +417,18 @@
               <label>City<input name="city" autocomplete="address-level2" required maxlength="60"></label>
               <label>WhatsApp / phone number<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="16" placeholder="98xxxxxxxx"></label>
             </div>
-            <label>How many members?
-              <select name="members" required>
-                <option value="" disabled selected>Choose one</option>
-                <option>Under 50</option>
-                <option>50 – 150</option>
-                <option>150 – 500</option>
-                <option>500+</option>
-              </select>
-            </label>
+            <div class="lf-row">
+              <label>How many members?
+                <select name="members" required>
+                  <option value="" disabled selected>Choose one</option>
+                  <option>Under 50</option>
+                  <option>50 – 150</option>
+                  <option>150 – 500</option>
+                  <option>500+</option>
+                </select>
+              </label>
+              <label>Email <span class="lf-opt">(optional)</span><input name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@example.com"></label>
+            </div>
             <label>Anything you want to ask? <span class="lf-opt">(optional)</span><textarea name="message" rows="3" maxlength="600"></textarea></label>
             <!-- Honeypot: hidden from people, bots fill it in -->
             <div class="lf-hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -514,6 +517,10 @@
         show('Please fill in every field marked above.', false); return;
       }
       if (!/^[6-9]\d{9}$/.test(phone)) { show('Please enter a valid 10-digit Indian mobile number.', false); return; }
+      data.email = (data.email || '').trim();
+      if (data.email && !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(data.email)) {
+        show('Please check your email address, or leave it empty.', false); return;
+      }
       btn.disabled = true; btn.textContent = 'Sending…'; show('', true);
       fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
