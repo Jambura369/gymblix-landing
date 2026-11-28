@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="Gymblix: run your gym at lightning speed">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Gymblix","operatingSystem":"Android","applicationCategory":"BusinessApplication","description":"Gym management app for Indian gyms: members, fees, renewal reminders, QR attendance, staff and reports.","url":"https://gymblix.com/","offers":{"@type":"AggregateOffer","priceCurrency":"INR","lowPrice":"0","highPrice":"1499","offerCount":"4"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Gymblix","operatingSystem":"Android","applicationCategory":"BusinessApplication","description":"Gym management app for Indian gyms: members, fees, renewal reminders, QR attendance, staff and reports.","url":"https://gymblix.com/","offers":{"@type":"AggregateOffer","priceCurrency":"INR","lowPrice":"0","highPrice":"1500","offerCount":"4"}}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,7 +186,7 @@
           <p class="calc-label">You may be losing about</p>
           <p class="calc-big"><span id="c-loss">₹12,000</span><small>/month</small></p>
           <p class="calc-sub">That is <strong id="c-year">₹1,44,000</strong> a year.</p>
-          <p class="calc-sub">Gymblix Starter costs <strong>₹499/month</strong>. Win back just <strong id="c-one">1 member</strong> and it pays for itself.</p>
+          <p class="calc-sub">Gymblix Starter costs <strong>₹500/month</strong>. Win back just <strong id="c-one">1 member</strong> and it pays for itself.</p>
           <p class="calc-note">An estimate from the numbers above, not a guarantee.</p>
         </div>
       </div>
@@ -253,7 +253,7 @@
         <div class="plan">
           <h3>Starter</h3>
           <p class="for">Small gyms</p>
-          <div class="price" data-monthly="₹499" data-annual="₹4,990"><span class="amount">₹499</span> <small class="per">/month</small></div>
+          <div class="price" data-monthly="₹500" data-annual="₹5,000"><span class="amount">₹500</span> <small class="per">/month</small></div>
           <ul>
             <li>Up to 200 members</li>
             <li>1 staff account</li>
@@ -267,7 +267,7 @@
           <span class="tag">Most popular</span>
           <h3>Growth</h3>
           <p class="for">Growing gyms</p>
-          <div class="price" data-monthly="₹899" data-annual="₹8,990"><span class="amount">₹899</span> <small class="per">/month</small></div>
+          <div class="price" data-monthly="₹900" data-annual="₹9,000"><span class="amount">₹900</span> <small class="per">/month</small></div>
           <ul>
             <li>Up to 1,000 members</li>
             <li>4 staff accounts</li>
@@ -282,7 +282,7 @@
         <div class="plan">
           <h3>Elite</h3>
           <p class="for">Big gyms</p>
-          <div class="price" data-monthly="₹1,499" data-annual="₹14,990"><span class="amount">₹1,499</span> <small class="per">/month</small></div>
+          <div class="price" data-monthly="₹1,500" data-annual="₹15,000"><span class="amount">₹1,500</span> <small class="per">/month</small></div>
           <ul>
             <li>Unlimited members</li>
             <li>Unlimited staff</li>
@@ -495,7 +495,7 @@
       var loss = members * rate * fee;
       document.getElementById('c-loss').textContent = inr(loss);
       document.getElementById('c-year').textContent = inr(loss * 12);
-      var need = fee > 0 ? Math.max(1, Math.ceil(499 / fee)) : 1;
+      var need = fee > 0 ? Math.max(1, Math.ceil(500 / fee)) : 1;
       document.getElementById('c-one').textContent = need + (need === 1 ? ' member' : ' members');
     }
     [m, f, r].forEach(function (el) { el.addEventListener('input', calc); });
